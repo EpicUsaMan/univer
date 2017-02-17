@@ -13,7 +13,7 @@ class Game:
 			try:
 				cls.pyramid.add(card)
 			except ValueError:
-				well.cards.append(card)
+				well._cards.append(card)
 				break
 
 		return cls
@@ -34,9 +34,7 @@ class Game:
 	@classmethod
 	def next(cls):
 		try:
-			cls.viewed_well.cards.prepend(cls.well.next())
+			cls.vwell._cards.prepend(cls.well.next())
 		except StopIteration:
 			cls.score -= 500
-			cls.well = Deck(cls.viewed_well)
-			cls.viewed_well = Deck([])
-
+			cls.well, cls.vwell = Deck(cls.vwell._cards), Deck([])
