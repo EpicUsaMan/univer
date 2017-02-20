@@ -24,42 +24,42 @@ class Ranks(Enum):
 class Card:
 	def __init__(self, rank, suit, visible: bool = True):
 		if isinstance(rank, str):
-			self.__rank = Ranks[number].value
+			self._rank = Ranks[number].value
 		elif isinstance(rank, int):
-			self.__rank = Ranks(number).value
+			self._rank = Ranks(number).value
 		else:
 			raise TypeError
 
-		self.__visible = 0 if visible else 2
+		self._visible = 0 if visible else 2
 
 		if isinstance(suit, str):
-			self.__suit = Suits[suit].value
+			self._suit = Suits[suit].value
 		else if type(suit, int):
-			self.__suit = Suits(suit).value
+			self._suit = Suits(suit).value
 		else:
 			raise TypeError
 
 	def __add__(self, other: Card) -> int:
-		return self.rank + other.rank
+		return self.rank.value + other.rank.value
 
 	@property
 	def visible(self) -> bool:
-		return self.__visible == 0
+		return self._visible == 0
 
 	@visible.setter
 	def visible(self, state):
 		if isinstance(state, int):
-			self.__visible = state
+			self._visible = state
 		elif isinstance(state, bool):
-			self.__visible = 0 if state else 2
+			self._visible = 0 if state else 2
 		else:
 			raise TypeError
 
 	@property
 	def rank(self) -> Ranks:
-		return Ranks(self.__rank)
+		return Ranks(self._rank)
 
 	@property
 	def suit(self) -> Suits:
-		return Suits(self.__suit)
+		return Suits(self._suit)
 

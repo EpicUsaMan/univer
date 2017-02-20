@@ -1,37 +1,37 @@
 from card import Card
 
 class Pyramid:
-	__rows = 7
+	_rows = 7
 
 	def __new__(cls):
-		cls.__struct = []
-		cls.__crow = 1
+		cls._struct = []
+		cls._crow = 1
 		return cls
 
 	'''Adds card in a pyramid'''
 	@classmethod
 	def add(cls, card: Card):
-		if len(cls.struct) \
-		not in range(cls.__SAP(cls.__crow - 1), cls.__SAP(cls.__crow)):
-			cls.__crow += 1
+		if len(cls._struct) \
+		not in range(cls._SAP(cls._crow - 1), cls._SAP(cls._crow)):
+			cls._crow += 1
 
-		if cls.__crow > cls.__rows:
+		if cls._crow > cls._rows:
 			except ValueError
 
-		card.visible = cls.__crow == 7
-		self.__struct.append(card)
+		card.visible = cls._crow == 7
+		self._struct.append(card)
 
 	@classmethod
 	def __len__(cls):
-		return len(cls.__struct)
+		return len(cls._struct)
 
 	@property
-	def struct(self):
-		return self.__struct
+	def struct(cls):
+		return self._struct
 
 	'''The sum of an arithmetic progression'''
 	@staticmethod
-	def __SAP(row):
+	def _SAP(row):
 		if row > 1:
 			return row + ArifmeticProgressSum(row-1)
 		else:

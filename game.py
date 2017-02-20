@@ -3,17 +3,23 @@ from deck import Deck
 from pyramid import Pyramid
 
 class Game:
-	def __new__(cls):
-		cls.score = 0
-		cls.well = Deck()
-		cls.viewed_well = Deck([])
-		cls.pyramid = Pyramid()
+	def __new__(cls, modified = False, **kwargs):
+		cls._score = 0
 
-		for card in well:
+		if modified:
+			cls._well = kwargs['Deck'](**kwargs['well'])
+			cls._vwell = kwargs['Deck']([], **kwargs['vwell'])
+			cls._pyramid = kwargs['Pyramid'](**kwargs['pyramid'])
+		else:
+			cls._well = Deck()
+			cls._vwell = Deck([])
+			cls._pyramid = Pyramid()
+
+		for card in cls._well:
 			try:
-				cls.pyramid.add(card)
+				cls._pyramid.add(card)
 			except ValueError:
-				well._cards.append(card)
+				cls._well._cards.append(card)
 				break
 
 		return cls
@@ -34,7 +40,7 @@ class Game:
 	@classmethod
 	def next(cls):
 		try:
-			cls.vwell._cards.prepend(cls.well.next())
+			cls._vwell._cards.prepend(cls._well.next())
 		except StopIteration:
-			cls.score -= 500
-			cls.well, cls.vwell = Deck(cls.vwell._cards), Deck([])
+			cls._score -= 500
+			cls._well, cls._vwell = Deck(cls._vwell._cards), Deck([])

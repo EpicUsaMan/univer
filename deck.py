@@ -1,5 +1,5 @@
 from card import Card, Ranks, Suits
-import random
+from random import shuffle
 
 class Deck:
 	def __init__(self, cards = None):
@@ -12,10 +12,7 @@ class Deck:
 				for suit in suits:
 					self._cards.append(Card(rank, suit))
 
-			def random_sort(value: Card) -> int:
-				return random.randint(0, len(ranks) * len(suits)
-
-			self._cards = self._cards.sort(key=random_sort)
+			shuffle(self._cards)
 		elif isinstance(cards, list) and \
 			 all(isinstance(element, Card) for element in cards):
 			self._cards = cards
