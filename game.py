@@ -1,46 +1,77 @@
-from card import Card
-from deck import Deck
+from PyQt5 import QtWidgets, QtGui, QtCore
 from pyramid import Pyramid
+from deck import Deck, DeckStrategy
+from card import Card
+import sys
 
-class Game:
-	def __new__(cls, modified = False, **kwargs):
-		cls._score = 0
 
-		if modified:
-			cls._well = kwargs['Deck'](**kwargs['well'])
-			cls._vwell = kwargs['Deck']([], **kwargs['vwell'])
-			cls._pyramid = kwargs['Pyramid'](**kwargs['pyramid'])
-		else:
-			cls._well = Deck()
-			cls._vwell = Deck([])
-			cls._pyramid = Pyramid()
+class Game(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.card = False
+        self._well = Deck(DeckStrategy.invisible, self)
+        self._vwell = Deck(DeckStrategy.visible, self)
+        self._pyramid = Pyramid(self._well, self)
+        p = self.palette()
+        p.setColor(self.backgroundRole(), QtGui.QColor(3, 89, 2))
+        self.setPalette(p)
+        self.__score = 0
 
-		for card in cls._well:
-			try:
-				cls._pyramid.add(card)
-			except ValueError:
-				cls._well._cards.append(card)
-				break
+        self.score_view = QtWidgets.QLabel("Score: 0", parent=self)
+        self.score_view.setGeometry(20, Card.height + 20, 200, 40)
+        ps = self.score_view.palette()
+        ps.setColor(self.score_view.foregroundRole(), QtGui.QColor(255, 255, 255))
+        self.score_view.setPalette(ps)
 
-		return cls
+        self.show()
 
-	'''When card on card'''
-	@classmethod
-	def isBeaten(cls, this: Card, other: Card) -> bool:
-		if this.visible and other.visible and this + other == 13:
-			cls.score += 200
-			return True
-		else:
-			return False
+    def cardClick(self, element: int, row: int):
+        card = self._pyramid._cards[element]
 
-	@classmethod
-	def __iter__(cls):
-		return cls
+        if card.leaf > 0:
+            return
 
-	@classmethod
-	def next(cls):
-		try:
-			cls._vwell._cards.prepend(cls._well.next())
-		except StopIteration:
-			cls._score -= 500
-			cls._well, cls._vwell = Deck(cls._vwell._cards), Deck([])
+        if self.card == False:
+            if card._rank.value == 13:
+                self.score += 50
+                for link in self._pyramid.getLinks(element, row):
+                    link.leaf = link.leaf - 1
+                card.setParent(None)
+                return
+            card.toggleActive()
+            self.card = [card, element, row]
+        else:
+            if self.card[0] is card:
+                card.toggleActive()
+                self.card = False
+                return
+
+            if self.card[0]._rank.value + card._rank.value == 13:
+                self.score += 50
+
+                if len(self.card) == 3:
+                    for link in self._pyramid.getLinks(self.card[1], self.card[2]):
+                        link.leaf = link.leaf - 1
+
+                for link in self._pyramid.getLinks(element, row):
+                    link.leaf = link.leaf - 1
+
+                self.card[0].setParent(None)
+                card.setParent(None)
+            else:
+                self.card[0].toggleActive()
+            self.card = False
+
+    @property
+    def score(self):
+        return self.__score
+
+    @score.setter
+    def score(self, value: int):
+        self.__score = value
+        self.score_view.setText("Score: " + str(value))
+
+
+app = QtWidgets.QApplication(sys.argv)
+game = Game()
+sys.exit(app.exec_())
